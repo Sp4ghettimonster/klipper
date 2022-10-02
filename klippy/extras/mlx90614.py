@@ -15,14 +15,10 @@ class MLX90614:
         self.i2c = bus.MCU_I2C_from_config(config, MLX90614_CHIP_ADDR, MLX90614_I2C_SPEED)
         self.regs = MLX90614_REGS
         self.temp = 0
-        self.printer.register_event_handler("klippy:ready", self.handle_ready)
-        self.printer.register_event_handler("klippy:shutdown", self.handle_shutdown)
         self.gcode = self.printer.lookup_object('gcode')
         self.gcode.register_mux_command("MLX90614", "TEMP", self.name,
                                         self.cmd_MLX90614_TEMP,
                                         desc=self.cmd_MLX90614_TEMP_help)
-    def handle_shutdown(self):
-        self.gcode.reset_last_position()
     cmd_MLX90614_TEMP_help = "Get temperature from MLX90614"
     def cmd_MLX90614_TEMP(self, params):
         self.gcode.reset_last_position()
