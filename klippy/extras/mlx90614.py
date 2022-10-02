@@ -41,5 +41,5 @@ class MLX90614:
     def get_status(self, eventtime):
         return {'Temperature': round(self.temp, 2)}
 
-def load_config_prefix(config):
+def load_config(config):
     return MLX90614(config)
