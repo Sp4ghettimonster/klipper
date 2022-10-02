@@ -13,7 +13,6 @@ class MLX90614:
         self.printer = config.get_printer()
         self.name = config.get_name().split()[-1]
         self.i2c = bus.MCU_I2C_from_config(config, MLX90614_CHIP_ADDR, MLX90614_I2C_SPEED)
-        self.i2c.set_speed(MLX90614_I2C_SPEED)
         self.regs = MLX90614_REGS
         self.temp = 0
         self.printer.register_event_handler("klippy:ready", self.handle_ready)
