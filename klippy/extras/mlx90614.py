@@ -12,7 +12,7 @@ class MLX90614:
     def __init__(self, config):
         self.printer = config.get_printer()
         self.name = config.get_name().split()[-1]
-        self.i2c = bus.MCU_I2C_from_config(config, 0, default_addr=MLX90614_CHIP_ADDR)
+        self.i2c = bus.MCU_I2C_from_config(config, MLX90614_CHIP_ADDR, MLX90614_I2C_SPEED)
         self.i2c.set_speed(MLX90614_I2C_SPEED)
         self.regs = MLX90614_REGS
         self.temp = 0
