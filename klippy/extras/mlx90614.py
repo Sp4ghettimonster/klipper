@@ -21,8 +21,6 @@ class MLX90614:
         self.gcode.register_mux_command("MLX90614", "TEMP", self.name,
                                         self.cmd_MLX90614_TEMP,
                                         desc=self.cmd_MLX90614_TEMP_help)
-    def handle_ready(self):
-        self.printer.lookup_object('toolhead').register_move_observer(self.move_update)
     def handle_shutdown(self):
         self.gcode.reset_last_position()
     cmd_MLX90614_TEMP_help = "Get temperature from MLX90614"
