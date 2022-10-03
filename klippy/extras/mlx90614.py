@@ -50,7 +50,7 @@ class MLX90614:
         return self.report_time
     
     def kelvin_to_celsius(self, x):
-        return  x[1] + (x[0] << 8) * 0.02 - 273.15
+        return  (x * 0.02) - 273.15
 
     def _init_mlx90614(self):
         try:
