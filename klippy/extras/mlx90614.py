@@ -30,7 +30,7 @@ class MLX90614:
                                            minval=MLX90614_MIN_REPORT_TIME)
         self.temp = 0
         self.min_temp = 0
-        self.max_temp = 380
+        self.max_temp = 1000
         self.sample_timer = self.reactor.register_timer(self._sample_mlx90614)
         self.printer.add_object("mlx90614 %s" % (self.name), self)
         self.printer.register_event_handler("klippy:connect", self.handle_connect)
@@ -50,7 +50,8 @@ class MLX90614:
         return self.report_time
     
     def kelvin_to_celsius(self, x):
-        return x * 0.02 - 273.15
+        x = x[1] 
+        return  x[1] + (x[0] << 8) * 0.02 - 273.15
 
     def _init_mlx90614(self):
         try:
