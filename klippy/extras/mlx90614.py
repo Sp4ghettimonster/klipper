@@ -43,8 +43,14 @@ class MLX90614:
         self.min_temp = min_temp
         self.max_temp = max_temp
     
+    def setup_callback(self, cb): #passt
+        self._callback = cb
+    
+    def get_report_time_delta(self):
+        return self.report_time
+    
     def kelvin_to_celsius(self, x):
-        return x[1] + (x[0] << 8) * 0.02 - 273.15
+        return ((x[0] << 8) + x[1] ) * 0.02 - 273.15
 
     def _init_mlx90614(self):
         try:
@@ -58,7 +64,7 @@ class MLX90614:
             sample = self.read_register('TEMP', 2)
             self.temp = self.kelvin_to_celsius(sample)
         except Exception:
-            logging.exception("lm75: Error reading data")
+            logging.exception("MLX90614: Error reading data")
             self.temp = 0.0
             return self.reactor.NEVER
 
@@ -71,11 +77,6 @@ class MLX90614:
         self._callback(self.mcu.estimated_print_time(measured_time), self.temp)
         return measured_time + self.report_time
     
-    def setup_callback(self, cb): #passt
-        self._callback = cb
-    
-    def get_report_time_delta(self):
-        return self.report_time
 
     def read_register(self, reg_name, read_len):
         # read a single register
