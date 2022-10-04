@@ -12,11 +12,11 @@ MLX90614_REGS = {
     'TEMP'   : 0x07, 
     'MLX90614_ID1' : 0x3C
 }
-MLX90614_REPORT_TIME = 0.7
+MLX90614_REPORT_TIME = 0.05
 # Temperature can be sampled at any time but the read aborts
 # the current conversion. Conversion time is 300ms so make
 # sure not to read too often.
-MLX90614_MIN_REPORT_TIME = 0.5
+MLX90614_MIN_REPORT_TIME = 0.03
 
 # define a new temperature sensor
 class MLX90614:
@@ -26,8 +26,8 @@ class MLX90614:
         self.reactor = self.printer.get_reactor()
         self.i2c = bus.MCU_I2C_from_config(config, MLX90614_CHIP_ADDR, MLX90614_I2C_SPEED)
         self.mcu = self.i2c.get_mcu()
-  #      self.report_time = config.getfloat('mlx90614_report_time', MLX90614_REPORT_TIME,
-  #                                         minval=MLX90614_MIN_REPORT_TIME)
+        self.report_time = config.getfloat('mlx90614_report_time', MLX90614_REPORT_TIME,
+                                           minval=MLX90614_MIN_REPORT_TIME)
         self.temp = 0
         self.min_temp = 0
         self.max_temp = 1000
@@ -46,8 +46,8 @@ class MLX90614:
     def setup_callback(self, cb): #passt
         self._callback = cb
     
- #   def get_report_time_delta(self):
- #       return self.report_time
+    def get_report_time_delta(self):
+        return self.report_time
     
     def kelvin_to_celsius(self, x):
         return (x[1] << 8 | x[0]) * 0.02 - 273.15
