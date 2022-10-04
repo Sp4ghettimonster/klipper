@@ -12,11 +12,11 @@ MLX90614_REGS = {
     'TEMP'   : 0x07, 
     'MLX90614_ID1' : 0x3C
 }
-MLX90614_REPORT_TIME = 0.05
+MLX90614_REPORT_TIME = 0.1
 # Temperature can be sampled at any time but the read aborts
 # the current conversion. Conversion time is 300ms so make
 # sure not to read too often.
-MLX90614_MIN_REPORT_TIME = 0.03
+MLX90614_MIN_REPORT_TIME = 0.07
 
 # define a new temperature sensor
 class MLX90614:
