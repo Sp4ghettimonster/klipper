@@ -78,18 +78,18 @@ class MLX90614:
         return measured_time + self.report_time
     
 
-#    def read_register(self, reg_name, read_len):
+    def read_register(self, reg_name, read_len):
         # read a single register
- #       regs = [MLX90614_REGS[reg_name]]
-  #      params = self.i2c.i2c_read(regs, read_len)
-   #     return bytearray(params['response'])
-#
- #   def write_register(self, reg_name, data):
-  #      if type(data) is not list:
-   #         data = [data]
-    #    reg = MLX90614_REGS[reg_name]
-     #   data.insert(0, reg)
-      #  self.i2c.i2c_write(data)
+        regs = [MLX90614_REGS[reg_name]]
+        params = self.i2c.i2c_read(regs, read_len)
+        return bytearray(params['response'])
+
+    def write_register(self, reg_name, data):
+        if type(data) is not list:
+            data = [data]
+        reg = MLX90614_REGS[reg_name]
+        data.insert(0, reg)
+        self.i2c.i2c_write(data)
     
     def get_status(self, eventtime):
         return {'Temperature': round(self.temp, 2)} #passt
