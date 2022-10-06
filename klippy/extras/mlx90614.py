@@ -12,11 +12,11 @@ MLX90614_REGS = {
     'TEMP'   : 0x07, 
     'MLX90614_ID1' : 0x3C
 }
-MLX90614_REPORT_TIME = 0.05
+MLX90614_REPORT_TIME = 1
 # Temperature can be sampled at any time but the read aborts
 # the current conversion. Conversion time is 300ms so make
 # sure not to read too often.
-MLX90614_MIN_REPORT_TIME = 0.03
+MLX90614_MIN_REPORT_TIME = 0.5
 
 # define a new temperature sensor
 class MLX90614:
@@ -52,10 +52,16 @@ class MLX90614:
     def kelvin_to_celsius(self, x):
         return (x[1] << 8 | x[0]) * 0.02 - 273.15
 
+    def read_register(self, reg_name, read_len):
+        # read a single register
+        regs = [MLX90614_REGS[reg_name]]
+        params = self.i2c.i2c_read(regs, read_len)
+        return bytearray(params['response'])
+
     def _init_mlx90614(self):
         try:
             prodid = self.read_register('MLX90614_ID1', 1)[0]
-            logging.info("MLX90614: PRODID: %s" % (prodid))
+            logging.info("MLX90614: PRODID %s" % (prodid))
         except:
             pass
 
@@ -77,12 +83,6 @@ class MLX90614:
         self._callback(self.mcu.estimated_print_time(measured_time), self.temp)
         return measured_time + self.report_time
     
-
-    def read_register(self, reg_name, read_len):
-        # read a single register
-        regs = [MLX90614_REGS[reg_name]]
-        params = self.i2c.i2c_read(regs, read_len)
-        return bytearray(params['response'])
 
     def write_register(self, reg_name, data):
         if type(data) is not list:
