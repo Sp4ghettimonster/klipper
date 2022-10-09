@@ -26,7 +26,8 @@ class MLX90614:
         self.reactor = self.printer.get_reactor()
         self.i2c = bus.MCU_I2C_from_config(config, MLX90614_CHIP_ADDR, MLX90614_I2C_SPEED)
         self.mcu = self.i2c.get_mcu()
-        self.report_time = config.getfloat('mlx90614_report_time', MLX90614_REPORT_TIME)
+        self.report_time = config.getfloat('mlx90614_report_time', MLX90614_REPORT_TIME,
+                                           minval=MLX90614_MIN_REPORT_TIME)
         self.temp = 0
         self.min_temp = 0
         self.max_temp = 1000
@@ -68,10 +69,13 @@ class MLX90614:
         try:
             sample = self.read_register('TEMP', 2)
             self.temp = self.kelvin_to_celsius(sample)
-        except Exception:
-            logging.exception("MLX90614: Error reading data")
-            self.temp = 0.0
-            return self.reactor.NEVER
+        except:
+            pass
+        
+        #Exception:
+         #   logging.exception("MLX90614: Error reading data")
+          #  self.temp = 0.0
+           # return self.reactor.NEVER
 
         if self.temp < self.min_temp or self.temp > self.max_temp:
             self.printer.invoke_shutdown(
