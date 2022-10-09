@@ -93,7 +93,7 @@ class MLX90614:
 
 # write to and then read from register
     def write_read_register(self, reg_name, data, read_len):
-        self.write_register(reg_name, data==None)
+        self.write_register(reg_name, 0)
         return self.read_register(reg_name, read_len)
     
     def get_status(self, eventtime):
