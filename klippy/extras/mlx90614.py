@@ -12,7 +12,7 @@ MLX90614_REGS = {
     'TEMP'   : 0x07, 
     'MLX90614_ID1' : 0x3C
 }
-MLX90614_REPORT_TIME = 0.5
+MLX90614_REPORT_TIME = 1
 # Temperature can be sampled at any time but the read aborts
 # the current conversion. Conversion time is 300ms so make
 # sure not to read too often.
