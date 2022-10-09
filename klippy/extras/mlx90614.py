@@ -67,7 +67,7 @@ class MLX90614:
 
     def _sample_mlx90614(self, eventtime):
         try:
-            sample = self.write_read_register('TEMP', 2)
+            sample = self.write_read_register('TEMP', 0, 2)
             self.temp = self.kelvin_to_celsius(sample)
         except Exception:
             logging.exception("MLX90614: Error reading data")
@@ -93,7 +93,7 @@ class MLX90614:
 
 # write to and then read from register
     def write_read_register(self, reg_name, data, read_len):
-        self.write_register(reg_name, 0)
+        self.write_register(reg_name, data)
         return self.read_register(reg_name, read_len)
     
     def get_status(self, eventtime):
