@@ -91,6 +91,12 @@ class MLX90614:
         data.insert(0, reg)
         self.i2c.i2c_write(data)
 
+    def write_read_register(self, reg_name, data, read_len):
+        write = self.write_register(reg_name, data)
+        read = self.read_register(reg_name, read_len)
+        return read
+
+
     def get_status(self, eventtime):
         return {'Temperature': round(self.temp, 2)} #passt
 
