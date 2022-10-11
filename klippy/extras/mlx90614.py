@@ -67,7 +67,7 @@ class MLX90614:
             pass
 
     def _sample_mlx90614(self, eventtime):
-        self.write_register('TEMP', 0)
+        self.write_register('TEMP', sample)
         try:
             sample = self.write_read_register('TEMP', 2)
             self.temp = self.kelvin_to_celsius(sample)
