@@ -7,7 +7,7 @@ import logging
 from . import bus
 
 MLX90614_CHIP_ADDR = 0x5A
-MLX90614_I2C_SPEED = 100000
+MLX90614_I2C_SPEED = 400000
 MLX90614_REGS = {
     'TEMP'   : 0x07,
     'RAW_IR1' : 0x04, 
