@@ -50,8 +50,7 @@ class MLX90614:
         return self.report_time
     
     def kelvin_to_celsius(self, x):
-        return x
-        #(x[1] << 8 | x[0]) * 0.02 - 273.15
+        return (x[1] << 8 + x[0]) * 0.02 - 273.15
 
     def read_register(self, reg_name, read_len):
         # read a single register
