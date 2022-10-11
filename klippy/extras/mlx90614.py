@@ -9,7 +9,8 @@ from . import bus
 MLX90614_CHIP_ADDR = 0x5A
 MLX90614_I2C_SPEED = 100000
 MLX90614_REGS = {
-    'TEMP'   : 0x07, 
+    'TEMP'   : 0x07,
+    'RAW_IR1' : 0x04, 
     'MLX90614_ID1' : 0x3C
 }
 MLX90614_REPORT_TIME = 0.7
@@ -66,8 +67,9 @@ class MLX90614:
             pass
 
     def _sample_mlx90614(self, eventtime):
+        self.write_register('TEMP', 0)
         try:
-            sample = self.write_read_register('TEMP', 2)[0]
+            sample = self.write_read_register('TEMP', 2)
             self.temp = self.kelvin_to_celsius(sample)
         except Exception:
             logging.exception("MLX90614: Error reading data")
@@ -90,11 +92,6 @@ class MLX90614:
         reg = MLX90614_REGS[reg_name]
         data.insert(0, reg)
         self.i2c.i2c_write(data)
-
-    def write_read_register(self, reg_name, data, read_len):
-        write = self.write_register(reg_name, data)
-        read = self.read_register(reg_name, read_len)
-        return read
 
 
     def get_status(self, eventtime):
