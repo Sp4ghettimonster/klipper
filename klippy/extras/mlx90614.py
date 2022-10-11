@@ -50,7 +50,7 @@ class MLX90614:
         return self.report_time
     
     def kelvin_to_celsius(self, x):
-        return (x[0] + x[1] / 256) - 273.15
+        return (x[1] << 8 | x[0]) * 0.02 - 273.15
 
     def read_register(self, reg_name, read_len):
         # read a single register
@@ -67,7 +67,7 @@ class MLX90614:
 
     def _sample_mlx90614(self, eventtime):
         try:
-            sample = self.read_register('TEMP', 2)
+            sample = self.read_register('TEMP', 2)[0]
             self.temp = self.kelvin_to_celsius(sample)
         except Exception:
             logging.exception("MLX90614: Error reading data")
