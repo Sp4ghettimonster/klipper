@@ -27,13 +27,13 @@ class MLX90614:
         self.reactor = self.printer.get_reactor()
         self.i2c = bus.MCU_I2C_from_config(config, MLX90614_CHIP_ADDR, MLX90614_I2C_SPEED)
         self.mcu = self.i2c.get_mcu()
-        self.report_time = config.getfloat('mlx90614_report_time', MLX90614_REPORT_TIME,
+        self.report_time = config.getint('mlx90614_report_time', MLX90614_REPORT_TIME,
                                            minval=MLX90614_MIN_REPORT_TIME)
         self.temp = 0
         self.min_temp = 0
         self.max_temp = 1000
         self.sample_timer = self.reactor.register_timer(self._sample_mlx90614)
-        self.printer.add_object("mlx90614 %s" % (self.name), self)
+        self.printer.add_object("mlx90614 " + self.name, self)
         self.printer.register_event_handler("klippy:connect", self.handle_connect)
    
     def handle_connect(self):
@@ -67,9 +67,8 @@ class MLX90614:
             pass
 
     def _sample_mlx90614(self, eventtime):
-        self.write_register('RAW_IR1', 0)
         try:
-            sample = self.write_read_register('TEMP', 2)
+            sample = self.read_register('TEMP', 2)
             self.temp = self.kelvin_to_celsius(sample)
         except Exception:
             logging.exception("MLX90614: Error reading data")
