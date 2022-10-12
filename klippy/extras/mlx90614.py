@@ -54,7 +54,7 @@ class MLX90614:
 
     def read_register(self, reg_name, read_len):
         # read a single register
-        regs = [MLX90614_REGS[reg_name]]
+        regs = MLX90614_REGS[reg_name]
         params = self.i2c.i2c_read(regs, read_len)
         return bytearray(params['response'])
 
