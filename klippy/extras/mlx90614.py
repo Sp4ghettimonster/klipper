@@ -7,10 +7,9 @@ import logging
 from . import bus
 
 MLX90614_CHIP_ADDR = 0x5A
-MLX90614_I2C_SPEED = 400000
+MLX90614_I2C_SPEED = 100000
 MLX90614_REGS = {
     'TEMP'   : 0x07,
-    'RAW_IR1' : 0x04, 
     'MLX90614_ID1' : 0x3C
 }
 MLX90614_REPORT_TIME = 0.2
@@ -51,7 +50,7 @@ class MLX90614:
         return self.report_time
     
     def kelvin_to_celsius(self, x):
-        return (x[1] << 8 | x[0]) * 0.02 - 273.15
+        return (x[1] << 7 | x[0]) * 0.02 - 273.15
 
     def read_register(self, reg_name, read_len):
         # read a single register
