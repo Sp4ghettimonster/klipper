@@ -52,22 +52,22 @@ class MLX90614:
     def kelvin_to_celsius(self, x):
         return (x[1] << 8 | x[0]) * 0.02 - 273.15
 
-    def read_register(self, reg_name):
+    def read_register(self, reg_name, read_len):
         # read a single register
         regs = [MLX90614_REGS[reg_name]]
-        params = self.i2c.i2c_read(regs)
+        params = self.i2c.i2c_read(regs, read_len)
         return bytearray(params['response'])
 
     def _init_mlx90614(self):
         try:
-            prodid = self.read_register('MLX90614_ID1')[0]
+            prodid = self.read_register('MLX90614_ID1', 1)[0]
             logging.info("MLX90614: PRODID %s" % (prodid))
         except:
             pass
 
     def _sample_mlx90614(self, eventtime):
         try:
-            sample = self.read_register('TEMP')
+            sample = self.read_register('TEMP', 2)
             self.temp = self.kelvin_to_celsius(sample)
         except Exception:
             logging.exception("MLX90614: Error reading data")
@@ -93,6 +93,7 @@ class MLX90614:
 
 
     def get_status(self, eventtime):
+        self.temp = self.i2c.i2c_read(0x07,2)
         return {'Temperature': round(self.temp, 2)} #passt
 
 def load_config(config):
