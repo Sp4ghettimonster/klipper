@@ -56,7 +56,7 @@ class MLX90614:
         # read a single register
         regs = [MLX90614_REGS[reg_name]]
         params = self.i2c.i2c_read(regs, read_len)
-        return bytearray(params['response'])
+        return bytearray(params['response'])[0]
 
     def _init_mlx90614(self):
         try:
@@ -93,7 +93,6 @@ class MLX90614:
 
 
     def get_status(self, eventtime):
-        self.temp = self.i2c.i2c_read(0x07,2)
         return {'Temperature': round(self.temp, 2)} #passt
 
 def load_config(config):
