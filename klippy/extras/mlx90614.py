@@ -84,12 +84,12 @@ class MLX90614:
         return measured_time + self.report_time
     
 
-    def write_register(self, reg_name, data):
-        if type(data) is not list:
-            data = [data]
-        reg = MLX90614_REGS[reg_name]
-        data.insert(0, reg)
-        self.i2c.i2c_write(data)
+#    def write_register(self, reg_name, data):
+ #       if type(data) is not list:
+  #          data = [data]
+   #     reg = MLX90614_REGS[reg_name]
+    #    data.insert(0, reg)
+     #   self.i2c.i2c_write(data)
 
 
     def get_status(self, eventtime):
