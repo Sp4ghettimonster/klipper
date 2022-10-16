@@ -9,14 +9,14 @@ from . import bus
 MLX90614_CHIP_ADDR = 0x5A
 MLX90614_I2C_SPEED = 100000
 MLX90614_REGS = {
-    'TEMP'   : 0x07,
+    'MLX90614_TOBJ1'   : 0x07,
     'MLX90614_ID1' : 0x3C
 }
-MLX90614_REPORT_TIME = 1
+MLX90614_REPORT_TIME = 0.5
+MLX90614_RETRY_ATTEMPTS = 5
 # Temperature can be sampled at any time but the read aborts
 # the current conversion. Conversion time is 300ms so make
 # sure not to read too often.
-MLX90614_MIN_REPORT_TIME = 1
 
 # define a new temperature sensor
 class MLX90614:
@@ -26,8 +26,7 @@ class MLX90614:
         self.reactor = self.printer.get_reactor()
         self.i2c = bus.MCU_I2C_from_config(config, MLX90614_CHIP_ADDR, MLX90614_I2C_SPEED)
         self.mcu = self.i2c.get_mcu()
-        self.report_time = config.getint('mlx90614_report_time', MLX90614_REPORT_TIME,
-                                           minval=MLX90614_MIN_REPORT_TIME)
+        self.report_time = config.getint('mlx90614_report_time', MLX90614_REPORT_TIME)
         self.temp = 0
         self.min_temp = 0
         self.max_temp = 1000
@@ -43,7 +42,7 @@ class MLX90614:
         self.min_temp = min_temp
         self.max_temp = max_temp
     
-    def setup_callback(self, cb): #passt
+    def setup_callback(self, cb):
         self._callback = cb
     
     def get_report_time_delta(self):
@@ -58,6 +57,15 @@ class MLX90614:
         params = self.i2c.i2c_read(regs, read_len)
         return bytearray(params['response'])
 
+    def retry_read_register(self, reg_name, read_len):
+        # read a single register
+        for i in range(MLX90614_RETRY_ATTEMPTS):
+            try:
+                return self.read_register(reg_name, read_len)
+            except:
+                pass
+        raise Exception("MLX90614: Error reading data")
+
     def _init_mlx90614(self):
         try:
             prodid = self.read_register('MLX90614_ID1', 1)[0]
@@ -67,7 +75,7 @@ class MLX90614:
 
     def _sample_mlx90614(self, eventtime):
         try:
-            sample = self.read_register('TEMP', 2)
+            sample = self.retry_read_register('MLX90614_TOBJ1', 2)
             self.temp = self.kelvin_to_celsius(sample)
         except Exception:
             logging.exception("MLX90614: Error reading data")
@@ -93,7 +101,7 @@ class MLX90614:
 
 
     def get_status(self, eventtime):
-        return {'Temperature': round(self.temp, 2)} #passt
+        return {'Temperature': round(self.temp, 2)}
 
 def load_config(config):
     pheaters = config.get_printer().load_object(config, "heaters")
