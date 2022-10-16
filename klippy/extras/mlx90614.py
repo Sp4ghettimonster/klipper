@@ -63,7 +63,7 @@ class MLX90614:
             try:
                 return self.read_register(reg_name, read_len)
             except:
-                sleep(0.1)
+                self.reactor.sleep(0.1)
         raise Exception("MLX90614: Error reading data")
 
     def _init_mlx90614(self):
