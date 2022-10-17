@@ -50,10 +50,14 @@ class MLX90614:
         try:
             self.file_handle.seek(0)
             self.temp = float(self.file_handle.read())
+            self.oldtemp = self.temp
+            self.failcounter = 0
         except Exception:
-            logging.exception("temperature_host: Error reading data")
-            self.temp = 0.0
-            return self.reactor.NEVER
+            self.temp = self.oldtemp
+            self.failcounter += 1
+
+        if self.failcounter > 5:
+            self.printer.invoke_shutdown("MLX90614 sensor failed to read")
 
         if self.temp < self.min_temp:
             self.printer.invoke_shutdown(
@@ -68,6 +72,7 @@ class MLX90614:
         measured_time = self.reactor.monotonic()
         self._callback(mcu.estimated_print_time(measured_time), self.temp)
         return measured_time + HOST_REPORT_TIME
+
     def get_status(self, eventtime):
         return {'Temperature': round(self.temp, 2)}
 
